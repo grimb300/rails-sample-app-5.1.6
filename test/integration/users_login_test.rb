@@ -1,6 +1,7 @@
 require 'test_helper'
 
 class UsersLoginTest < ActionDispatch::IntegrationTest
+
   test "login with invalid information" do
     # 1. Visit the login path.
     get login_path
@@ -16,4 +17,18 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
     # 6. Verify that the flash message doesn’t appear on the new page.
     assert flash.empty?
   end
+
+  test "login with valid information" do
+    # 1. Visit the login path.
+    get login_path
+    # 2. Post valid information to the sessions path.
+    post login_path, params: { session: { email: "foo@bar.com", password: "foobar" } }
+    # 3. Verify that the login link disappears.
+    assert_select "a[href=?]", login_path
+    # 4. Verify that a logout link appears
+    assert_select "a[href=?]", logout_path
+    # 5. Verify that a profile link appears.
+    assert_select "a[href=?]", current_user
+  end
+
 end
