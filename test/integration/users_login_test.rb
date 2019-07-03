@@ -2,6 +2,10 @@ require 'test_helper'
 
 class UsersLoginTest < ActionDispatch::IntegrationTest
 
+  def setup
+    @user = users(:michael)
+  end
+
   test "login with invalid information" do
     # 1. Visit the login path.
     get login_path
@@ -22,13 +26,15 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
     # 1. Visit the login path.
     get login_path
     # 2. Post valid information to the sessions path.
-    post login_path, params: { session: { email: "foo@bar.com", password: "foobar" } }
+    post login_path, params: { session: { email: @user.email, password: "password" } }
+    assert_redirected_to @user
+    follow_redirect!
     # 3. Verify that the login link disappears.
-    assert_select "a[href=?]", login_path
+    assert_select "a[href=?]", login_path, count: 0
     # 4. Verify that a logout link appears
     assert_select "a[href=?]", logout_path
     # 5. Verify that a profile link appears.
-    assert_select "a[href=?]", current_user
+    assert_select "a[href=?]", user_path(@user)
   end
 
 end
