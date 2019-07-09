@@ -41,6 +41,8 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
     # 7. Verify logged out
     assert_not is_logged_in?
     assert_redirected_to root_path
+    # 7.1 Simulate a user clicking logout in a second window.
+    delete logout_path
     follow_redirect!
     # 8. Verify that the login link disappears.
     assert_select "a[href=?]", login_path
